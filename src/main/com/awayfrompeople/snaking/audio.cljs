@@ -16,21 +16,20 @@
     [{:voice (m/simple-voice {:frequency frequency
                               :gain      gain
                               :type      "sawtooth"})
-      ;:voice2 (m/simple-voice {:frequency frequency
-      ;                         :detune    -4
-      ;                         :gain      gain
-      ;                         :type      "sine"})
-      ;:reverb [:convolver {:buffer ir}]
+      :voice2 (m/simple-voice {:frequency frequency
+                               :detune    -4
+                               :gain      gain
+                               :type      "sine"})
+      :reverb [:convolver {:buffer ir}]
       :fx    (m/multi-tap-delay {:times (mapv m/at-start [(t/seconds 120 "1/4")
                                                           (t/seconds 120 "1/2")
                                                           (t/seconds 120 "1")]) :gains (mapv m/at-start [1 0.5 0.25 0.1])})
-      ;:vca    [:gain {:gain 0.1}]
+      :vca    [:gain {:gain 0.3}]
       :comp  [:dynamics-compressor {:threshold -50 :knee 40 :ratio 12 :attack 0 :release 0.25}]
-      ;:out    [:gain {:gain 1}]
       }
-     #{;[:voice2 :vca]
-       ;[:vca :reverb]
-       ;[:reverb :comp]
+     #{[:voice2 :vca]
+       [:vca :reverb]
+       [:reverb :comp]
        [:voice :fx]
        [:fx :comp]
        [:comp :>]
