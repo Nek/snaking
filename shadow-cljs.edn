@@ -1,0 +1,18 @@
+{:deps  true
+
+ ;:ssl {:keystore "ssl/localhost.jks"
+ ;      :password "123456"}
+
+ :dev-http {8080 "public"}
+
+ :builds
+ {:prod
+  {:target :browser
+   :modules {:main {:init-fn com.awayfrompeople.snaking.app/init}}
+   :release {:js-options {:minimize-require true}}
+   :output-dir "release/js"}
+  :dev
+  {:target :browser
+   :modules {:main {:init-fn com.awayfrompeople.snaking.app/init}}
+   :release {:js-options {:minimize-require true}}
+   :compiler-options {:infer-externs :auto}}}}

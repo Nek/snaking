@@ -1,0 +1,17 @@
+{:paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+ :deps
+ {cljs-audio/cljs-audio               {:local/root "../cljs-audio"}
+  org.clojure/clojure                 {:mvn/version "1.10.3"}
+  org.clojure/clojurescript           {:mvn/version "1.10.879"}
+  org.clojure/core.async              {:mvn/version "1.3.618"}
+  thheller/shadow-cljs                {:mvn/version "2.15.8"}
+  thi.ng/geom                         {:mvn/version "1.0.0-RC3"}
+  thi.ng/domus                        {:mvn/version "0.1.0"}
+  medley/medley                       {:mvn/version "1.3.0"}
+  camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
+  org.clojure/test.check              {:mvn/version "1.1.0"}
+  lambdaisland/fetch                  {:mvn/version "1.0.33"}
+  funcool/lentes                      {:mvn/version "1.3.3"}}}
