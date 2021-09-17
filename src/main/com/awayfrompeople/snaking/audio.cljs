@@ -11,21 +11,27 @@
     ["standardized-audio-context" :refer (AudioContext)]))
 
 (defn graph [{:keys [events ir]}]
-  (let [{:keys [frequency gain]} (s/schedule-parameters {:frequency at-time! :gain (partial adsr! 0.1 0.15 0.6 1 0.2)}
-                                                        events)]
-    [{:voice (m/simple-voice {:frequency frequency
-                              :gain      gain
-                              :type      "sawtooth"})
-      :voice2 (m/simple-voice {:frequency frequency
-                               :detune    -4
-                               :gain      gain
-                               :type      "sine"})
+  (let [{:keys [frequency gain]}
+        (s/schedule-parameters
+          {:frequency at-time! :gain (partial adsr! 0.1 0.15 0.6 1 0.2)}
+          events)]
+    [{:voice  (m/simple-voice
+                {:frequency frequency
+                 :gain      gain
+                 :type      "sawtooth"})
+      :voice2 (m/simple-voice
+                {:frequency frequency
+                 :detune    -4
+                 :gain      gain
+                 :type      "sine"})
       :reverb [:convolver {:buffer ir}]
-      :fx    (m/multi-tap-delay {:times (mapv m/at-start [(t/seconds 120 "1/4")
-                                                          (t/seconds 120 "1/2")
-                                                          (t/seconds 120 "1")]) :gains (mapv m/at-start [1 0.5 0.25 0.1])})
+      :fx     (m/multi-tap-delay
+                {:times (mapv m/at-start
+                              [(t/seconds 120 "1/4")
+                               (t/seconds 120 "1/2")
+                               (t/seconds 120 "1")]) :gains (mapv m/at-start [1 0.5 0.25 0.1])})
       :vca    [:gain {:gain 0.3}]
-      :comp  [:dynamics-compressor {:threshold -50 :knee 40 :ratio 12 :attack 0 :release 0.25}]
+      :comp   [:dynamics-compressor {:threshold -50 :knee 40 :ratio 12 :attack 0 :release 0.25}]
       }
      #{[:voice2 :vca]
        [:vca :reverb]
