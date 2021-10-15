@@ -1,4 +1,4 @@
-{:deps  true
+{:deps     true
 
  ;:ssl {:keystore "ssl/localhost.jks"
  ;      :password "123456"}
@@ -6,13 +6,23 @@
  :dev-http {8080 "public"}
 
  :builds
- {:prod
-  {:target :browser
-   :modules {:main {:init-fn com.awayfrompeople.snaking.app/init}}
-   :release {:js-options {:minimize-require true}}
-   :output-dir "release/js"}
-  :dev
-  {:target :browser
-   :modules {:main {:init-fn com.awayfrompeople.snaking.app/init}}
-   :release {:js-options {:minimize-require true}}
-   :compiler-options {:infer-externs :auto}}}}
+           {:prod
+            {:target     :browser
+             :modules    {:shared {:entries []}
+                          :main   {:init-fn    com.awayfrompeople.snaking.app/init
+                                   :depends-on #{:shared}}
+                          :worker {:init-fn    cljs-audio.updates-worker/worker
+                                   :depends-on  #{:shared}
+                                   :web-worker true}}
+             :release    {:js-options {:minimize-require true}}
+             :output-dir "release/js"}
+            :dev
+            {:target           :browser
+             :modules          {:shared {:entries []}
+                                :main   {:init-fn    com.awayfrompeople.snaking.app/init
+                                         :depends-on #{:shared}}
+                                :worker {:init-fn    cljs-audio.updates-worker/worker
+                                         :depends-on #{:shared}
+                                         :web-worker true}}
+             :release          {:js-options {:minimize-require true}}
+             :compiler-options {:infer-externs :auto}}}}
