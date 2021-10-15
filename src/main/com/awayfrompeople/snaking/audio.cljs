@@ -1,7 +1,7 @@
 (ns com.awayfrompeople.snaking.audio
   (:require
     [cljs-audio.webaudio :as wa]
-    [cljs-audio.envelopes :refer [adsr! adsr at-time!]]
+    [cljs-audio.envelopes :refer [l-adsr! at-time!]]
     [cljs-audio.scheduling :as s]
     [cljs-audio.time :as t]
     [cljs-audio.modules :as m]
@@ -12,7 +12,7 @@
 
 (defn graph [{:keys [events ir]}]
   (let [params (s/schedule-parameters
-                 {:frequency at-time! :gain (partial adsr! 0.1 0.15 0.6 1 0.2)}
+                 {:frequency at-time! :gain (partial l-adsr! 0.1 0.15 0.6 1 0.2)}
                  events)
         {:keys [frequency gain]} params]
     [{:voice  (m/simple-voice
@@ -34,8 +34,8 @@
       :comp   [:dynamics-compressor {:threshold -50 :knee 40 :ratio 12 :attack 0 :release 0.25}]
       }
      #{[:voice2 :vca]
-       [:vca :reverb]
-       [:reverb :comp]
+       ;[:vca :reverb]
+       [:vca :comp]
        [:voice :fx]
        [:fx :comp]
        [:comp :>]
@@ -45,16 +45,12 @@
 
 (def events ["touchstart" "touchend" "mousedown" "keydown"])
 
-(def is-initialized (atom false))
-
 (defn update-audio [{:keys [audio freq time]}]
   (let [time (+ 0.1 time)]
     (p/then (wa/calculate-updates @audio (graph {:ir :ir :events [{:frequency freq :gain 1 ::s/time (+ time 0)}
                                                                   {:frequency (* 2 freq) :gain 1 ::s/time (+ time (t/seconds 120 "1/4"))}
                                                                   {:frequency (* 4 freq) :gain 1 ::s/time (+ time (t/seconds 120 "1/4") (t/seconds 120 "1/4"))}]}))
-            (fn [updates]
-              (let [new-env (wa/eval-updates! @audio updates)]
-                (reset! audio (into @audio {:env new-env})))))))
+            #(reset! audio (wa/eval-updates! @audio %)))))
 
 
 (defn resume-audio-context []
@@ -79,8 +75,7 @@
                                                                                :freq  (.-offsetY e)
                                                                                :time  (wa/current-time @audio)
                                                                                }))
-                                                              ))
-                                                          (reset! is-initialized true))
+                                                              )))
                        (catch js/Error err (js/console.log (ex-cause err)))))))))
 
 (doseq [ev events] (js/document.body.addEventListener ev resume-audio-context false))
