@@ -13,9 +13,14 @@
    [thi.ng.geom.gl.webgl.animator :refer [animate]]
    [thi.ng.domus.core :as dom]
    [com.awayfrompeople.snaking.audio :refer [resume-audio-context events]]
-   ["number-generator" :refer (aleaRNGFactory) :rename {aleaRNGFactory alea-rng-factory}]))
+   [clojure.test.check.random :as rnd]))
 
-(def gen1 (.-uFloat32 (alea-rng-factory 2)))
+(def rnd (atom (rnd/make-random 1)))
+(defn next-random! [] (let [res (rnd/rand-double @rnd)]
+                        (swap! rnd #(first (rnd/split %)))
+                        res))
+
+(defn choose [prng v] (nth v (Math/floor (* (count v) (prng)))))
 
 (defn attract!
   "Takes a 2d or 3d attractor position, a particle and attractor

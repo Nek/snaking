@@ -6,7 +6,6 @@
     [cljs-audio.time :as t]
     [cljs-audio.modules :as m]
     [camel-snake-kebab.core :refer [->camelCase]]
-    [cljs.core.async :refer [go]]
     [cljs.core.async.interop :refer-macros [<p!]]
     [promesa.core :as p]
     ["standardized-audio-context" :as sac :refer (AudioContext)]))
